@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "stores rest api"
+version = "0.1.0"
+description = "API for Stores and Items"
+authors = ["Alfredo de Morais"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+Flask = "2.3.2"
+flask-smorest = "0.42.0"
+flask-sqlalchemy = "*"
+marshmallow = "3.19.0"
+pre-commit = "*"
+python-dotenv = "1.0.0"
+sqlalchemy = "*"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
