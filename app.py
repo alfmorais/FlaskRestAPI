@@ -1,13 +1,14 @@
 import os
 
 from database import db
-from flask import Flask
+from flask import Flask, jsonify
 from flask_jwt_extended import JWTManager
 from flask_smorest import Api
 from models import Item, ItemTags, Store, Tag, User  # noqa F401
 from resources.items import blp as ItemsBlueprint
 from resources.stores import blp as StoresBlueprint
 from resources.tags import blp as TagsBlueprint
+from resources.users import blp as UsersBlueprint
 
 
 def create_app(db_url=None):
@@ -41,11 +42,50 @@ def create_app(db_url=None):
 
     # JWT Configuration
     app.config["JWT_SECRETY_KEY"] = "84466196-47cb-4bdb-8b2a-f4a157cc34fe"
-    jwt = JWTManager(app)  # noqa F841
+
+    jwt = JWTManager(app)
+
+    # JWT Standard Responses
+    @jwt.expired_token_loader
+    def expired_token_callback(jwt_header, jwt_payload):
+        return (
+            jsonify(
+                {
+                    "message": "The token has expired.",
+                    "error": "token_expired",
+                }
+            ),
+            401,
+        )
+
+    @jwt.invalid_token_loader
+    def invalid_token_callback(error):
+        return (
+            jsonify(
+                {
+                    "message": "Signature verification failed.",
+                    "error": "invalid_token",
+                }
+            ),
+            401,
+        )
+
+    @jwt.unauthorized_loader
+    def missing_token_callback(error):
+        return (
+            jsonify(
+                {
+                    "description": "Request does not contain an access token.",
+                    "error": "authorization_required",
+                }
+            ),
+            401,
+        )
 
     # Blueprints configuration
     api.register_blueprint(ItemsBlueprint)
     api.register_blueprint(StoresBlueprint)
     api.register_blueprint(TagsBlueprint)
+    api.register_blueprint(UsersBlueprint)
 
     return app

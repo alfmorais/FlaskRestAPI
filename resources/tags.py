@@ -1,5 +1,6 @@
 from database import db
 from flask.views import MethodView
+from flask_jwt_extended import jwt_required
 from flask_smorest import Blueprint, abort
 from models import Item, Store, Tag
 from schemas import TagAndItemSchema, TagSchema
@@ -8,13 +9,15 @@ from sqlalchemy.exc import SQLAlchemyError
 blp = Blueprint("Tags", "tags", description="Operations on tags.")
 
 
-@blp.route("/stores/<string:id>/tags")
+@blp.route("/stores/<int:id>/tags")
 class TagsInStoreListAndCreate(MethodView):
+    @jwt_required()
     @blp.response(200, TagSchema(many=True))
     def get(self, id):
         store = Store.query.get_or_404(id)
         return store.tags.all()
 
+    @jwt_required()
     @blp.arguments(TagSchema)
     @blp.response(201, TagSchema)
     def post(self, tag_data, id):
@@ -38,13 +41,15 @@ class TagsInStoreListAndCreate(MethodView):
         return tag
 
 
-@blp.route("/tags/<string:id>")
+@blp.route("/tags/<int:id>")
 class TagRetrieve(MethodView):
+    @jwt_required()
     @blp.response(200, TagSchema)
     def get(self, id):
         tag = Tag.query.get_or_404(id)
         return tag
 
+    @jwt_required()
     @blp.response(
         202,
         description="Deletes a tag if no item is tagged with it.",  # noqa E501
@@ -70,8 +75,9 @@ class TagRetrieve(MethodView):
         )
 
 
-@blp.route("/item/<string:item_id>/tag/<string:tag_id>")
+@blp.route("/item/<int:item_id>/tag/<int:tag_id>")
 class LinkTagsToItem(MethodView):
+    @jwt_required()
     @blp.response(201, TagSchema)
     def post(self, item_id, tag_id):
         item = Item.query.get_or_404(item_id)
@@ -87,6 +93,7 @@ class LinkTagsToItem(MethodView):
 
         return tag
 
+    @jwt_required()
     @blp.response(200, TagAndItemSchema)
     def delete(self, item_id, tag_id):
         item = Item.query.get_or_404(item_id)
