@@ -4,6 +4,7 @@ from blocklist import BLOCKLIST
 from database import db
 from flask import Flask, jsonify
 from flask_jwt_extended import JWTManager
+from flask_migrate import Migrate
 from flask_smorest import Api
 from models import Item, ItemTags, Store, Tag, User  # noqa F401
 from resources.items import blp as ItemsBlueprint
@@ -35,8 +36,8 @@ def create_app(db_url=None):
 
     db.init_app(app)
 
-    with app.app_context():
-        db.create_all()
+    # Database / Alembic / Migrate Configuration
+    migrate = Migrate(app, db)
 
     # Blueprints
     api = Api(app)
