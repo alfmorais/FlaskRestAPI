@@ -17,6 +17,8 @@ passlib = "*"
 pre-commit = "*"
 python-dotenv = "1.0.0"
 sqlalchemy = "*"
+gunicorn = "*"
+psycopg2-binary = "*"
 
 
 [build-system]

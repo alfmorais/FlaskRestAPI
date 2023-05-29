@@ -2,6 +2,7 @@ import os
 
 from blocklist import BLOCKLIST
 from database import db
+from dotenv import load_dotenv
 from flask import Flask, jsonify
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
@@ -16,6 +17,7 @@ from resources.users import blp as UsersBlueprint
 def create_app(db_url=None):
     # Main instance of Flask APP
     app = Flask(__name__)
+    load_dotenv()
 
     # Documentation and Exceptions
     app.config["PROPAGATE_EXCEPTIONS"] = True
