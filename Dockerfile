@@ -16,4 +16,4 @@ RUN --mount=type=ssh poetry install
 
 COPY . .
 
-CMD ["gunicorn", "--bind", "0.0.0.0:80", "app:create_app()"]
+CMD ["/bin/bash", "docker-entrypoint.sh"]
